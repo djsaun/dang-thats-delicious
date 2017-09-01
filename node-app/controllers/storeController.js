@@ -24,7 +24,7 @@ exports.getStores = async(req, res) => {
 }
 
 exports.editStore = async(req, res) => {
-  // 1. Find the store given the id
+    // 1. Find the store given the id
   const store = await Store.findOne({ _id: req.params.id });
 
   // 2. Confirm they are the owner of the store
@@ -33,6 +33,9 @@ exports.editStore = async(req, res) => {
 }
 
 exports.updateStore = async(req, res) => {
+  // set the location data to be a point
+  req.body.location.type = 'Point';
+  
   // 1. Find and update the store
   const store = await Store.findOneAndUpdate({ _id: req.params.id }, req.body, {
     new: true, // return the new store instead of the old one
