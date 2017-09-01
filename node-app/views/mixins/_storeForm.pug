@@ -4,6 +4,15 @@ mixin storeForm(store = {})
     input(type="text" name="name" value=store.name)
     label(for="description") Description
     textarea(name="description")= store.description
+    //- Address, longitude and latitude
+    label(for="address") Address
+    //- test to make sure we have an address, if not, don't display value. This prevents the form from erroring out on the add new screen
+    input(type="text" id="address" name="location[address]" value=(store.location && store.location.address))
+    //- longitude must come first; latitude must come second
+    label(for="lng") Address Longitude
+    input(type="text" id="lng" name="location[coordinates][0]" value=(store.location && store.location.coordinates[0]) required)
+    label(for="lat") Address Latitude
+    input(type="text" id="lat" name="location[coordinates][1]" value=(store.location && store.location.coordinates[1]) required)
     - const choices = ['Wifi', 'Open Late', 'Family Friendly', 'Vegetarian', 'Licensed'];
     - const tags = store.tags || []
     ul.tags
