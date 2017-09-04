@@ -1,5 +1,20 @@
 const mongoose = require('mongoose');
 const Store = mongoose.model('Store'); // Referencing Store mongoose model that's being exported in ../models/Store.js
+const multer = require('multer'); // Used for image uploads
+const jimp = require('jimp'); // Used for image resizing
+const uuid = require('uuid') // Provides unique identifiers for all images - prevents us from overwriting images accidentially
+
+const multerOptions = {
+  storage: multer.memoryStorage(), // States where we're going to store the images
+  fileFilter(req, file, next) {
+    const isPhoto = file.mimetype.startsWith('image/');
+    if (isPhoto) {
+      next(null, true);
+    } else {
+      next({message: 'That file type is not allowed.'}, false);
+    }
+  }
+};
 
 exports.homePage = (req, res) => {
   res.render('index');
@@ -9,6 +24,28 @@ exports.addStore = (req, res) => {
   res.render('editStore', {
     title: 'Add Store'
   });
+}
+
+// Apply multer with multerOptions to single form field named 'photo'
+exports.upload = multer(multerOptions).single('photo'); // Stores file in memory - doesn't actually save the image
+
+exports.resize = async(req, res, next) => {
+  // check if there is no new file to resize
+  if (!req.file) {
+    next(); // skip to next middleware
+    return;
+  }
+  const extension = req.file.mimetype.split('/')[1]; // get the image extension
+  req.body.photo = `${uuid.v4()}.${extension}`; // Assign unique identifier to the photo
+
+  // Now we resize
+  const photo = await jimp.read(req.file.buffer) // can pass either filetype or buffer
+  await photo.resize(800, jimp.AUTO); // resize photo
+  await photo.write(`./public/uploads/${req.body.photo}`); // write photo to filesystem
+
+  // Once we have written our photo to our filesystem, keep going
+  next();
+
 }
 
 exports.createStore = async (req, res) => {
@@ -35,7 +72,7 @@ exports.editStore = async(req, res) => {
 exports.updateStore = async(req, res) => {
   // set the location data to be a point
   req.body.location.type = 'Point';
-  
+
   // 1. Find and update the store
   const store = await Store.findOneAndUpdate({ _id: req.params.id }, req.body, {
     new: true, // return the new store instead of the old one

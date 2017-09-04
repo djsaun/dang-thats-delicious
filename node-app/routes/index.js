@@ -7,8 +7,17 @@ const { catchErrors } = require('../handlers/errorHandlers'); // Object destruct
 router.get('/', catchErrors(storeController.getStores));
 router.get('/stores', catchErrors(storeController.getStores));
 router.get('/add', storeController.addStore);
-router.post('/add', catchErrors(storeController.createStore)); // Immediately runs catchErrors on post submit -- pushes errors in later middleware. Lets us avoid handling errors in the async/await function itself.
-router.post('/add/:id', catchErrors(storeController.updateStore)); // Necessary for form action. Cannot actually navigate to /add/:id
+
+router.post('/add',
+  storeController.upload,
+  catchErrors(storeController.resize),
+  catchErrors(storeController.createStore) // Immediately runs catchErrors on post submit -- pushes errors in later middleware. Lets us avoid handling errors in the async/await function itself.
+);
+router.post('/add/:id',
+storeController.upload,
+catchErrors(storeController.resize),
+catchErrors(storeController.updateStore)); // Necessary for form action. Cannot actually navigate to /add/:id
+
 router.get('/stores/:id/edit', catchErrors(storeController.editStore));
 
 module.exports = router;
