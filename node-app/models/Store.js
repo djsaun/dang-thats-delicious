@@ -35,12 +35,24 @@ const storeSchema = new mongoose.Schema({
   photo: String
 });
 
-storeSchema.pre('save', function(next) {
+storeSchema.pre('save', async function(next) {
   if (!this.isModified('name')) {
     next(); // skip it
     return; // stop function from running
   }
   this.slug = slug(this.name);
+
+  // find other stores that have identical slugs
+  // create regex that will search for stores
+  const slugRegEx = new RegExp(`^(${this.slug})((-[0-9]*$)?)$`, 'i'); // i means case-insensitive
+
+  // pass regex into query
+  const storesWithSlug = await this.constructor.find({ slug: slugRegEx }); // Trying to access store model before new store is created; this.constructor will equal Store by the time it runs
+
+  if (storesWithSlug.length) { // if slug already exists
+    this.slug = `${this.slug}-${storesWithSlug.length + 1}`; // create a new slug and with number value at the end
+  }
+
   next();
 });
 
