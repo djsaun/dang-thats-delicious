@@ -96,3 +96,10 @@ exports.getStoreBySlug = async(req, res, next) => {
 
   res.render('store', { store, title: store.name })
 }
+
+exports.getStoresByTag = async (req, res) => {
+  // get a list of all of the stores
+  const tags = await Store.getTagsList(); // Use custom static method that lives on model
+  const tag = req.params.tag;
+  res.render('tag', { tags, title: 'Tags', tag });
+}

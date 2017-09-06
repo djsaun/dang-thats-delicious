@@ -56,4 +56,12 @@ storeSchema.pre('save', async function(next) {
   next();
 });
 
+storeSchema.statics.getTagsList = function() { // static methods are bound to the model; using proper function so we have access to "this"
+  return this.aggregate([
+    { $unwind: '$tags' }, // get instance of item for each tag
+    { $group: { _id: '$tags', count: {$sum: 1} }}, // group everything based on the tag field and create a new field in each of those groups called count. Each time we group an item, the sum will increase by one.
+    { $sort: { count: -1 }} // sort by most popular
+  ]);
+}
+
 module.exports = mongoose.model('Store', storeSchema);
