@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const User = mongoose.model('User');
+const promisify = require('es6-promisify');
 
 exports.loginForm = (req, res) => {
   res.render('login', { title: 'Login' });
@@ -38,4 +40,15 @@ exports.validateRegister = (req, res, next) => {
     return; // stop the function from running
   }
   next(); // there were no errors
+};
+
+exports.register = async (req, res, next) => {
+  const user = new User({ email: req.body.email, name: req.body.name });
+
+  // use promisify library to convert callback in .register (comes from passportLocalMongoose library) to promise
+  const registerWithPromise = promisify(User.register, User); // if method you're trying to promisify lives on an object, you also need to pass the entire object
+
+  await registerWithPromise(user, req.body.password); // encrypts password
+  res.send('works');
+  next(); // pass to authController login
 };

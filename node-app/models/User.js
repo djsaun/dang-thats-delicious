@@ -15,7 +15,7 @@ const userSchema = new Schema({
     trim: true,
     validate: [validator.isEmail, 'Invalid Email Address'], // first is validation method, second is validation error
     required: 'Please supply an email address.',
-  }
+  },
   name: {
     type: String,
     required: 'Please supply a name.',
