@@ -49,6 +49,5 @@ exports.register = async (req, res, next) => {
   const registerWithPromise = promisify(User.register, User); // if method you're trying to promisify lives on an object, you also need to pass the entire object
 
   await registerWithPromise(user, req.body.password); // encrypts password
-  res.send('works');
   next(); // pass to authController login
 };

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const storeController = require('../controllers/storeController');
 const userController = require('../controllers/userController');
+const authController = require('../controllers/authController');
 const { catchErrors } = require('../handlers/errorHandlers'); // Object destructuring -- allows us to import an entire object
 
 // Do work here
@@ -30,10 +31,10 @@ router.get('/tags/:tag', catchErrors(storeController.getStoresByTag));
 router.get('/login', userController.loginForm);
 router.get('/register', userController.registerForm);
 
-// 3. We need to log them in
 router.post('/register',
   userController.validateRegister, // 1. Validate the registration data
-  userController.register // 2. Register the user
+  userController.register, // 2. Register the user
+  authController.login // 3. We need to log them in
 );
 
 module.exports = router;
