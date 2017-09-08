@@ -51,3 +51,23 @@ exports.register = async (req, res, next) => {
   await registerWithPromise(user, req.body.password); // encrypts password
   next(); // pass to authController login
 };
+
+exports.account = (req, res) => {
+  res.render('account', { title: 'Edit Your Account' });
+}
+
+exports.updateAccount = async (req, res) => {
+  const updates = {
+    name: req.body.name,
+    email: req.body.email
+  };
+
+  const user = await User.findOneAndUpdate(
+    { _id: req.user._id }, // query based on the id of the user
+    { $set: updates }, // takes updates variable values and sets it on top of what already exists for the user
+    { new: true, runValidators: true, content: 'query'} // options -- returns new user; validators are run again; context is required for mongoose to do the query properly
+  );
+
+  req.flash('success', 'Updated the profile!');
+  res.redirect('back'); // redirects to url they came from
+}
