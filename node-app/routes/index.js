@@ -29,6 +29,7 @@ router.get('/tags', catchErrors(storeController.getStoresByTag));
 router.get('/tags/:tag', catchErrors(storeController.getStoresByTag));
 
 router.get('/login', userController.loginForm);
+router.post('/login', authController.login);
 router.get('/register', userController.registerForm);
 
 router.post('/register',
@@ -36,5 +37,7 @@ router.post('/register',
   userController.register, // 2. Register the user
   authController.login // 3. We need to log them in
 );
+
+router.get('/logout', authController.logout);
 
 module.exports = router;
