@@ -23,6 +23,13 @@ const userSchema = new Schema({
   }
 });
 
+// Create a virtual field to get gravatar
+userSchema.virtual('gravatar').get(function() {
+  // use md5 hashing algorithm to get gravatar
+  const hash = md5(this.email);
+  return `https://gravatar.com/avatar/${hash}?s=200`;
+});
+
 userSchema.plugin(passportLocalMongoose, { usernameField: 'email' }); // passportLocalMongoose takes care of adding additional fields and methods to Schema; Set username as email
 
 userSchema.plugin(mongodbErrorHandler); // Change ugly errors into pretty errors
