@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer'); // Interfaces with SMTP and do the sending of the email for us
 const pug = require('pug');
-const juice = require('juice');
+const juice = require('juice'); // creates inline css
 const htmlToText = require('html-to-text');
 const promisify = require('es6-promisify');
 
@@ -13,13 +13,23 @@ const transport = nodemailer.createTransport({
   }
 });
 
+// Not exporting because this function isn't needed outside of this file
+const generateHTML = (filename, options = {}) => {
+  const html = pug.renderFile(`${__dirname}/../views/email/${filename}.pug`, options);
+  const inlined = juice(html);
+  return inlined;
+}
+
 exports.send = async (options) => {
+  const html = generateHTML(options.filename, options);
+  const text = htmlToText.fromString(html);
+
   const mailOptions = {
     from: `David Saunders <djsaun@gmail.com>`,
     to: options.user.email,
     subject: options.subject,
-    html: 'This will be filled in later',
-    text: 'This will also be filled in later'
+    html,
+    text
   };
 
   const sendMail = promisify(transport.sendMail, transport);
