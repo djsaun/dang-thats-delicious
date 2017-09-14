@@ -2,6 +2,7 @@ const passport = require('passport');
 const crypto = require('crypto'); // native node module
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
+const promisify = require('es6-promisify');
 
 exports.login = passport.authenticate('local', { // pass in strategy (local is for username/pw) and config object
  failureRedirect: '/login', // if failure, where should they go?
@@ -60,4 +61,41 @@ exports.reset = async (req, res) => {
 
   // if there is a user, show the reset password form
   res.render('reset', {title: 'Reset Your Password'});
+}
+
+exports.confirmedPasswords = (req, res, next) => {
+  if (req.body.password === req.body['confirm-password']) {
+    next(); // keep it going
+    return;
+  }
+  req.flash('error', 'Passwords do not match');
+  res.redirect('back');
+}
+
+exports.update = async (req, res) => {
+  // Find the user and make sure they're still within the token expiration period
+  const user = await User.findOne({
+    resetPasswordToken: req.params.token,
+    resetPasswordExpires: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    req.flash('error', 'Password reset token is invalid or has expired.');
+    return res.redirect('/login');
+  }
+
+  const setPassword = promisify(user.setPassword, user); // setPassword function is a callback, not a promise. Need to promisify it
+  await setPassword(req.body.password);
+
+  // Delete token and expire fields
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+
+  const updatedUser = await user.save();
+
+  // automatically log the user in
+  await req.login(updatedUser);
+
+  req.flash('success', 'Your password has been reset! You are now logged in.');
+  res.redirect('/');
 }
