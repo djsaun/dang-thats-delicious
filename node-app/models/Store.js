@@ -40,6 +40,12 @@ const storeSchema = new mongoose.Schema({
   }
 });
 
+// Define our indexes
+storeSchema.index({ // Say which fields we want to index
+  name: 'text', // Tell MongoDB what the fields should be indexed as
+  description: 'text'
+});
+
 storeSchema.pre('save', async function(next) {
   if (!this.isModified('name')) {
     next(); // skip it
