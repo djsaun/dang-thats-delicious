@@ -50,4 +50,8 @@ router.post('/account/reset/:token',
   catchErrors(authController.update // if they are the same, update the password
 ));
 
+// API Endpoints
+
+router.get('/api/search', catchErrors(storeController.searchStores)); 
+
 module.exports = router;
