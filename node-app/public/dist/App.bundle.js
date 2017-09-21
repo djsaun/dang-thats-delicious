@@ -1055,6 +1055,47 @@ function typeAhead(search) {
       console.error(err);
     });
   });
+
+  // Handle keyboard inputs
+  searchInput.on('keyup', function (e) {
+    // if they aren't pressing up (38), down (40), or enter (13), disregard
+    if (![38, 40, 13].includes(e.keyCode)) {
+      return;
+    }
+
+    var activeClass = 'search__result--active';
+
+    // find current list item
+    var current = search.querySelector('.' + activeClass);
+
+    // get list of all of the items
+    var items = search.querySelectorAll('.search__result');
+    var next = void 0;
+
+    if (e.keyCode === 40 && current) {
+      // if press down and one selected, set next to one after it
+      next = current.nextElementSibling || items[0];
+    } else if (e.keyCode === 40) {
+      // if press down and none selected, select the first item
+      next = items[0];
+    } else if (e.keyCode === 38 && current) {
+      // if press up and one selected, select the one before it or the last item
+      next = current.previousElementSibling || items[items.length - 1];
+    } else if (e.keyCode === 38) {
+      // if press up and none selected, select the last item
+      next = items[items.length - 1];
+    } else if (e.keyCode === 13 && current.href) {
+      // if enter key pressed and current element with an href, take user to that page
+      window.location = current.href;
+      return; // stop function from running
+    }
+
+    if (current) {
+      current.classList.remove(activeClass);
+    }
+
+    next.classList.add(activeClass);
+  });
 }
 
 exports.default = typeAhead;
