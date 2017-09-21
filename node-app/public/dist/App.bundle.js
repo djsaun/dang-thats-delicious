@@ -1018,7 +1018,12 @@ process.umask = function () {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var axios = __webpack_require__(19);
+
+var _axios = __webpack_require__(19);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function searchResultsHTML(stores) {
   return stores.map(function (store) {
@@ -1035,6 +1040,8 @@ function typeAhead(search) {
   var searchResults = search.querySelector('.search__results');
 
   searchInput.on('input', function () {
+    var _this = this;
+
     // if there is no value, quit it!
     if (!this.value) {
       searchResults.style.display = 'none';
@@ -1043,14 +1050,17 @@ function typeAhead(search) {
 
     // show search results
     searchResults.style.display = 'block';
-    searchResults.innerHTML = '';
 
     // use axios to hit API endpoint
-    axios.get('/api/search?q=' + this.value).then(function (res) {
+    _axios2.default.get('/api/search?q=' + this.value).then(function (res) {
       if (res.data.length) {
         var html = searchResultsHTML(res.data);
         searchResults.innerHTML = html;
+        return;
       }
+
+      // tell the user nothing came back
+      searchResults.innerHTML = '<div class="search__result">No results for ' + _this.value + ' found.</div>';
     }).catch(function (err) {
       console.error(err);
     });

@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 function searchResultsHTML(stores) {
   return stores.map(store => {
@@ -27,7 +27,6 @@ function typeAhead(search) {
 
     // show search results
     searchResults.style.display = 'block';
-    searchResults.innerHTML = '';
 
     // use axios to hit API endpoint
     axios
@@ -36,7 +35,11 @@ function typeAhead(search) {
         if (res.data.length) {
           const html = searchResultsHTML(res.data);
           searchResults.innerHTML = html;
+          return;
         }
+
+        // tell the user nothing came back
+        searchResults.innerHTML = `<div class="search__result">No results for ${this.value} found.</div>`
       })
       .catch(err => {
         console.error(err);
