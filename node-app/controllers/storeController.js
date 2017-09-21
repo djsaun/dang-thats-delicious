@@ -139,3 +139,21 @@ exports.searchStores = async (req, res) => {
   .limit(5);
   res.json(stores);
 }
+
+exports.mapStores = async(req, res) => {
+  const coordinates = [req.query.lng, req.query.lat].map(parseFloat); // .map(parseFloat) converts strings to numbers
+
+  const q = {
+    location: {
+      $near: { // $near is a mongodb object that allows us to search for items near a lat and lng
+        $geometry: {
+          type: 'Point',
+          coordinates
+        }
+      }
+    }
+  };
+
+  const stores = await Store.find(q);
+  res.json(stores);
+}

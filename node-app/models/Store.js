@@ -46,6 +46,10 @@ storeSchema.index({ // Say which fields we want to index
   description: 'text'
 });
 
+storeSchema.index({
+  location: '2dsphere' // field is indexed as geospatial data
+});
+
 storeSchema.pre('save', async function(next) {
   if (!this.isModified('name')) {
     next(); // skip it
