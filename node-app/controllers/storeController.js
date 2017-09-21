@@ -149,11 +149,12 @@ exports.mapStores = async(req, res) => {
         $geometry: {
           type: 'Point',
           coordinates
-        }
+        },
+        $maxDistance: 10000 // 10km
       }
     }
   };
 
-  const stores = await Store.find(q);
+  const stores = await Store.find(q).select('slug name description location').limit(10); // select lets you choose which fields to return; can do "-author" to choose which fields to hide
   res.json(stores);
 }
