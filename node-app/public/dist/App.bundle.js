@@ -1020,6 +1020,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 var axios = __webpack_require__(19);
 
+function searchResultsHTML(stores) {
+  return stores.map(function (store) {
+    return '\n      <a href="/store/' + store.slug + '" class="search__result">\n        <strong>' + store.name + '</strong>\n      </a>\n    ';
+  }).join('');
+}
+
 function typeAhead(search) {
   if (!search) {
     return;
@@ -1037,12 +1043,16 @@ function typeAhead(search) {
 
     // show search results
     searchResults.style.display = 'block';
+    searchResults.innerHTML = '';
 
     // use axios to hit API endpoint
     axios.get('/api/search?q=' + this.value).then(function (res) {
       if (res.data.length) {
-        console.log('There is something to show');
+        var html = searchResultsHTML(res.data);
+        searchResults.innerHTML = html;
       }
+    }).catch(function (err) {
+      console.error(err);
     });
   });
 }
