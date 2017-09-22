@@ -155,7 +155,7 @@ exports.mapStores = async(req, res) => {
     }
   };
 
-  const stores = await Store.find(q).select('slug name description location').limit(10); // select lets you choose which fields to return; can do "-author" to choose which fields to hide
+  const stores = await Store.find(q).select('slug name description location photo').limit(10); // select lets you choose which fields to return; can do "-author" to choose which fields to hide
   res.json(stores);
 }
 
