@@ -35,6 +35,10 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
         marker.place = place;
         return marker;
       });
+
+      // then zoom the map to fit all of the markers perfectly
+      map.setCenter(bounds.getCenter());
+      map.fitBounds(bounds);
     });
 }
 

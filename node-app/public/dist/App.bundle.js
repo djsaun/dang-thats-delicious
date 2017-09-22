@@ -2790,6 +2790,10 @@ function loadPlaces(map) {
       marker.place = place;
       return marker;
     });
+
+    // then zoom the map to fit all of the markers perfectly
+    map.setCenter(bounds.getCenter());
+    map.fitBounds(bounds);
   });
 }
 
