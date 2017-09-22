@@ -2862,6 +2862,12 @@ function ajaxHeart(e) {
   .then(function (res) {
     var isHearted = _this.heart.classList.toggle('heart__button--hearted'); // heart is a subelement of the form. Name attributes can be accessed via this.
     (0, _bling.$)('.heart-count').textContent = res.data.hearts.length;
+    if (isHearted) {
+      _this.heart.classList.add('heart__button--float');
+      setTimeout(function () {
+        return _this.heart.classList.remove('heart__button--float');
+      }, 2500); // remove float animation class from heart after animation ends (2.5 seconds)
+    }
   }).catch(console.error);
 }
 
