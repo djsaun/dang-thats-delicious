@@ -7,12 +7,12 @@ const reviewSchema = new mongoose.Schema({
     default: Date.now
   },
   author: {
-    type: mongoose.schema.ObjectId,
+    type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: 'You must supply an author!'
   },
   store: {
-    type: mongoose.schema.ObjectId,
+    type: mongoose.Schema.ObjectId,
     ref: 'Store',
     required: 'You must supply a store!'
   },
