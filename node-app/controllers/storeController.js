@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Store = mongoose.model('Store'); // Referencing Store mongoose model that's being exported in ../models/Store.js
+const User = mongoose.model('User'); // Referencing User mongoose model that's being exported in ../models/User.js
 const multer = require('multer'); // Used for image uploads
 const jimp = require('jimp'); // Used for image resizing
 const uuid = require('uuid') // Provides unique identifiers for all images - prevents us from overwriting images accidentially
@@ -161,4 +162,16 @@ exports.mapStores = async(req, res) => {
 
 exports.mapPage = (req, res) => {
   res.render('map', { title: 'Map' });
+}
+
+exports.heartStore = async (req, res) => {
+  // get list of person's stores
+  const hearts = req.user.hearts.map(obj => obj.toString()); // converts array of obj to array of strings
+  const operator = hearts.includes(req.params.id) ? '$pull' : '$addToSet' // $pull is mongodb operator to remove; $addToSet makes sure added value is unique
+  const user = await User
+    .findByIdAndUpdate(req.user._id,
+      { [operator]: { hearts: req.params.id }}, // will $pull or $addToSet depending on if heart is already in array or not
+      { new: true } // returns updated user
+  );
+  res.json(user);
 }

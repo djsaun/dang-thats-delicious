@@ -22,7 +22,10 @@ const userSchema = new Schema({
     trim: true
   },
   resetPasswordToken: String,
-  resetPasswordExpires: Date
+  resetPasswordExpires: Date,
+  hearts: [
+    { type: mongoose.Schema.ObjectId, ref: 'Store' } // hearts is an array of ids that are related to a store
+  ]
 });
 
 // Create a virtual field to get gravatar
