@@ -10,8 +10,24 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
   axios.get(`/api/stores/near?lat=${lat}&lng=${lng}`)
     .then(res => {
       const places = res.data;
-      console.log(places);
-    })
+
+      // check if there are any places
+      if (!places.length) {
+        alert('no places found!');
+        return;
+      }
+
+      // make markers
+      const markers = places.map(place => {
+        const [placeLng, placeLat] = place.location.coordinates;
+        const position = { lat: placeLat, lng: placeLng };
+        const marker = new google.maps.Marker({ map, position });
+
+        // attach place data to the marker
+        marker.place = place;
+        return marker;
+      });
+    });
 }
 
 function makeMap(mapDiv) {
