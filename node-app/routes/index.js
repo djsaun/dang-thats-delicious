@@ -50,9 +50,11 @@ router.post('/account/reset/:token',
   catchErrors(authController.update // if they are the same, update the password
 ));
 
+router.get('/map', storeController.mapPage);
+
 // API Endpoints
 
 router.get('/api/search', catchErrors(storeController.searchStores));
-router.get('/api/stores/near', catchErrors(storeController.mapStores)); 
+router.get('/api/stores/near', catchErrors(storeController.mapStores));
 
 module.exports = router;
