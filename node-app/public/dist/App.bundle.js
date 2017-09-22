@@ -2769,6 +2769,9 @@ function loadPlaces(map) {
       return;
     }
 
+    // create a bounds
+    var bounds = new google.maps.LatLngBounds();
+
     // make markers
     var markers = places.map(function (place) {
       var _place$location$coord = _slicedToArray(place.location.coordinates, 2),
@@ -2776,6 +2779,11 @@ function loadPlaces(map) {
           placeLat = _place$location$coord[1];
 
       var position = { lat: placeLat, lng: placeLng };
+
+      // extend bounds
+      bounds.extend(position);
+
+      // assign marker to position on map
       var marker = new google.maps.Marker({ map: map, position: position });
 
       // attach place data to the marker

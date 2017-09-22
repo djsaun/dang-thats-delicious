@@ -17,10 +17,18 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
         return;
       }
 
+      // create a bounds
+      const bounds = new google.maps.LatLngBounds();
+
       // make markers
       const markers = places.map(place => {
         const [placeLng, placeLat] = place.location.coordinates;
         const position = { lat: placeLat, lng: placeLng };
+
+        // extend bounds
+        bounds.extend(position);
+
+        // assign marker to position on map
         const marker = new google.maps.Marker({ map, position });
 
         // attach place data to the marker
