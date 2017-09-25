@@ -134,4 +134,12 @@ storeSchema.virtual('reviews', {
   foreignField: 'store' // which field on the Review?
 });
 
+function autopopulate(next) {
+  this.populate('reviews');
+  next();
+}
+
+storeSchema.pre('find', autopopulate); // Will populate reviews whenever a store is queried
+storeSchema.pre('findOne', autopopulate);
+
 module.exports = mongoose.model('Store', storeSchema);
