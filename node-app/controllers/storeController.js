@@ -98,7 +98,7 @@ exports.updateStore = async(req, res) => {
 
 exports.getStoreBySlug = async(req, res, next) => {
   // query database for specific store
-  const store = await Store.findOne({ slug: req.params.slug }).populate('author'); // add .populate to find associated data for the author
+  const store = await Store.findOne({ slug: req.params.slug }).populate('author reviews'); // add .populate to find associated data for the author
 
   // if no store found, continue on to next middleware
   if (!store) {

@@ -38,6 +38,9 @@ const storeSchema = new mongoose.Schema({
     ref: 'User', // tell mongodb that the author is going to be referenced to our user
     required: 'You must supply an author'
   }
+}, {
+  toJSON: { virtuals: true }, // anytime a document is converted to JSON, it will display virtuals
+  toObject: { virtuals: true} // anytime a document is converted to an object, it will display virtuals
 });
 
 // Define our indexes
