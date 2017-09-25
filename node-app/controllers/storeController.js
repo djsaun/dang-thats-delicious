@@ -66,13 +66,20 @@ exports.getStores = async(req, res) => {
   const storesPromise = Store
     .find() // Returns promise
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .sort({created: 'desc'});
 
   const countPromise = Store.count(); // get number of documents in Store model
 
   const [stores, count] = await Promise.all([storesPromise, countPromise]); // fire off both storesPromise and countPromise queries at same time but wait for them both to come back
 
   const pages = Math.ceil(count / limit); // Math.ceil gives us upper bound
+
+  if (!stores.length && skip) { // if user enters into url a page value that doesn't exist
+    req.flash('info', `Hey! You asked for page ${page}, but that doesn't exist. So I put you on page ${pages} instead.`);
+    res.redirect(`/stores/page/${pages}`);
+    return; // not going to render, just redirect which will prompt below res.render
+  }
 
   res.render('stores', { title: 'Stores', stores, page, pages, count }); // pass the data to the template
 }
