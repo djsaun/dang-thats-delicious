@@ -82,6 +82,50 @@ storeSchema.statics.getTagsList = function() { // static methods are bound to th
   ]);
 }
 
+storeSchema.statics.getTopStores = function() {
+  return this.aggregate([ // aggregate allows us to do complex queries
+    // Lookup Stores and populate their reviews
+    // $lookup populates a field
+    {
+      $lookup: {
+        from: 'reviews', // where we get the field from -- mongodb lowercases model and adds an 's' onto end of from field
+        localField: '_id',
+        foreignField: 'store',
+        as: 'reviews' // name of the field
+      }
+    },
+
+    // filter for only items that have two or more reviews
+    { $match: // match documents
+      {
+        'reviews.1': {$exists: true} // where second item in reviews exists is true
+      }
+    },
+
+    // add the average reviews field -- mongodb v 3.4 has $addFields which replaces $project; $project makes you add fields you need back in
+    { $project: { // add a field called averageRating -- $ means it's a field from the data being piped in (from our match)
+      photo: '$$ROOT.photo', // $$ROOT is equal to the original document
+      name: '$$ROOT.name',
+      reviews: '$$ROOT.reviews',
+      averageRating: { $avg: '$reviews.rating'} // set the value of averageRating to the average of each of the review's rating field
+      }
+    },
+
+    // sort it by our new field, highest reviews first
+    {
+      $sort: {
+        averageRating: -1
+      }
+    },
+
+    // limit to at most 10
+    {
+      $limit: 10
+    }
+
+  ]);
+}
+
 // find reviews where the stores _id property === Review's store property -- similar to a join but not saving any relationship
 storeSchema.virtual('reviews', {
   ref: 'Review', // go to Review model -- what model to link
