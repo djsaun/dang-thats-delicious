@@ -79,4 +79,11 @@ storeSchema.statics.getTagsList = function() { // static methods are bound to th
   ]);
 }
 
+// find reviews where the stores _id property === Review's store property -- similar to a join but not saving any relationship
+storeSchema.virtual('reviews', {
+  ref: 'Review', // go to Review model -- what model to link
+  localField: '_id', // which field on our store needs to match up with which field on our Review
+  foreignField: 'store' // which field on the Review?
+});
+
 module.exports = mongoose.model('Store', storeSchema);
