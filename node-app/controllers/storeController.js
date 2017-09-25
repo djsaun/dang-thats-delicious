@@ -57,8 +57,17 @@ exports.createStore = async (req, res) => {
 }
 
 exports.getStores = async(req, res) => {
+  // variables for pagination
+  const page = req.params.page || 1;
+  const limit = 4;
+  const skip = (page * limit) - limit;
+
   // 1. Query the database for a list of all stores
-  const stores = await Store.find(); // Returns promise
+  const stores = await Store
+    .find() // Returns promise
+    .skip(skip)
+    .limit(limit);
+
   res.render('stores', { title: 'Stores', stores }); // pass the data to the template
 }
 
