@@ -63,12 +63,18 @@ exports.getStores = async(req, res) => {
   const skip = (page * limit) - limit;
 
   // 1. Query the database for a list of all stores
-  const stores = await Store
+  const storesPromise = Store
     .find() // Returns promise
     .skip(skip)
     .limit(limit);
 
-  res.render('stores', { title: 'Stores', stores }); // pass the data to the template
+  const countPromise = Store.count(); // get number of documents in Store model
+
+  const [stores, count] = await Promise.all([storesPromise, countPromise]); // fire off both storesPromise and countPromise queries at same time but wait for them both to come back
+
+  const pages = Math.ceil(count / limit); // Math.ceil gives us upper bound
+
+  res.render('stores', { title: 'Stores', stores, page, pages, count }); // pass the data to the template
 }
 
 // Confirm that the logged in user created the store
