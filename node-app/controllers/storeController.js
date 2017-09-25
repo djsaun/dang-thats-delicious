@@ -186,6 +186,5 @@ exports.getHearts = async (req, res) => {
 
 exports.getTopStores = async (req, res) => {
   const stores = await Store.getTopStores(); // getTopStores() exists on the model
-  // res.render('topStores', { stores, title:'Top Stores!'});
-  res.json(stores);
+  res.render('topStores', { stores, title:'Top Stores!'});
 }

@@ -107,6 +107,7 @@ storeSchema.statics.getTopStores = function() {
       photo: '$$ROOT.photo', // $$ROOT is equal to the original document
       name: '$$ROOT.name',
       reviews: '$$ROOT.reviews',
+      slug: '$$ROOT.slug',
       averageRating: { $avg: '$reviews.rating'} // set the value of averageRating to the average of each of the review's rating field
       }
     },
